@@ -31,3 +31,5 @@ venv/
 *.sln
 static/
 *.pdf
+
+*.csv

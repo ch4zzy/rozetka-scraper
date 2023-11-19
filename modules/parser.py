@@ -14,14 +14,12 @@ def parse_html(url: str, max_pages: int) -> csv:
     page = 1
     count_pages = 0
 
-    while page:
+    while page <= max_pages:
         list_products = []
         res = requests.get(f"{url}page={page}/")
         soup = bs(res.text, 'lxml')
         products = soup.find_all('li', class_='catalog-grid__cell catalog-grid__cell_type_slim ng-star-inserted')
         for product in products:
-            if count_pages >= max_pages:
-                break
             id = product.find("div", class_="g-id display-none").text
             name = product.find("span", class_="goods-tile__title").text
             price = product.find("span", class_="goods-tile__price-value").text
@@ -34,3 +32,5 @@ def parse_html(url: str, max_pages: int) -> csv:
         write_csv_file(category=category, products=list_products)
         count_pages += 1
         page += 1
+        if count_pages >= max_pages:
+            break
