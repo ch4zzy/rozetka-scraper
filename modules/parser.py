@@ -5,10 +5,11 @@ from modules.csv_writer import write_csv_file, create_csv_file
 from modules.models import Product
 
 
-def parse_html(url: str, max_pages: int) -> csv:
+def parse_html(url: str) -> csv:
     result = requests.get(url=url)
     soup = bs(result.text, 'lxml')
     category = soup.find("h1", class_="catalog-heading ng-star-inserted").text
+    max_pages = get_max_pages(url=url)
     create_csv_file(category=category)
 
     page = 1
@@ -34,3 +35,11 @@ def parse_html(url: str, max_pages: int) -> csv:
         page += 1
         if count_pages >= max_pages:
             break
+
+
+def get_max_pages(url: str) -> int:
+    r = requests.get(url)
+    soup = bs.BeautifulSoup(r.text, "lxml")
+    pages = soup.find_all("a", class_="pagination__link ng-star-inserted")
+    pages_values = [page.text for page in pages]
+    return int(pages_values[-1])
